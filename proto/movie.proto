@@ -1,0 +1,21 @@
+syntax = "proto3";
+package movie;
+
+message Movie {
+    int32 id = 1;
+    string title = 2;
+    string director = 3;
+}
+
+message MoviePayload {
+    string movie_title = 1;
+    string director = 2;
+}
+
+message CreateMovieResponse {
+    string message = 1;
+}
+
+service MovieService {
+    rpc create_movie(MoviePayload) returns (CreateMovieResponse);
+}
