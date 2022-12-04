@@ -1,4 +1,3 @@
-use std::sync::Arc;
 use std::{fmt::Debug};
 
 use crate::movie::movie_service_server::MovieServiceServer;
@@ -12,7 +11,7 @@ use crate::movie::{MoviePayload, CreateMovieResponse};
 
 #[derive(Debug)]
 pub struct MovieContext {
-    repo: Arc<dyn MovieRepo + Send + Sync + 'static>,
+    repo: Box<dyn MovieRepo + Send + Sync + 'static>,
 }
 
 #[tonic::async_trait]
@@ -35,7 +34,7 @@ impl MovieService for MovieContext {
 
 pub fn new<T: MovieRepo + Send + Sync + 'static>(movie_repo: T) -> MovieServiceServer<MovieContext> {
     let data = MovieServiceServer::new(MovieContext {
-        repo: Arc::new(movie_repo),
+        repo: Box::new(movie_repo),
     });
 
     return data;

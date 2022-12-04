@@ -1,4 +1,3 @@
-use std::sync::Arc;
 use std::{fmt::Debug};
 
 use crate::repo::{traits::UserRepo};
@@ -11,7 +10,7 @@ use crate::user::{user_service_server::UserServiceServer, CreateUserPayload, Cre
 
 #[derive(Debug)]
 pub struct UserContext {
-    repo: Arc<dyn UserRepo + Send + Sync + 'static>,
+    repo: Box<dyn UserRepo + Send + Sync + 'static>,
 }
 
 #[tonic::async_trait]
@@ -34,7 +33,7 @@ impl UserService for UserContext {
 
 pub fn new<T: UserRepo + Send + Sync + 'static>(user_repo: T) -> UserServiceServer<UserContext> {
     let data = UserServiceServer::new(UserContext {
-        repo: Arc::new(user_repo),
+        repo: Box::new(user_repo),
     });
 
     return data;
