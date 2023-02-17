@@ -1,16 +1,17 @@
-use std::{fmt::Debug};
+use std::fmt::Debug;
 
-use crate::repo::{traits::UserRepo};
+use crate::repo::traits::UserRepo;
 
+use crate::grpc::user::user_service_server::UserService;
 use tonic::{Request, Response, Status};
-use crate::user::user_service_server::UserService;
 
-use crate::user::{user_service_server::UserServiceServer, CreateUserPayload, CreateUserResponse};
-
+use crate::grpc::user::{
+    user_service_server::UserServiceServer, CreateUserPayload, CreateUserResponse,
+};
 
 #[derive(Debug)]
 pub struct UserContext {
-    repo: Box<dyn UserRepo + Send + Sync + 'static>,
+    repo: Box<dyn UserRepo>,
 }
 
 #[tonic::async_trait]
@@ -25,13 +26,13 @@ impl UserService for UserContext {
             Ok(e) => Ok(Response::new(e)),
             Err(err) => {
                 println!("{}", err);
-                return Err(Status::aborted("wow"))
+                return Err(Status::aborted("wow"));
             }
-        }        
+        }
     }
 }
 
-pub fn new<T: UserRepo + Send + Sync + 'static>(user_repo: T) -> UserServiceServer<UserContext> {
+pub fn new<T: UserRepo>(user_repo: T) -> UserServiceServer<UserContext> {
     let data = UserServiceServer::new(UserContext {
         repo: Box::new(user_repo),
     });

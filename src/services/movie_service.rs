@@ -1,17 +1,16 @@
-use std::{fmt::Debug};
+use std::fmt::Debug;
 
-use crate::movie::movie_service_server::MovieServiceServer;
+use crate::grpc::movie::movie_service_server::MovieServiceServer;
 use crate::repo::traits::MovieRepo;
 
+use crate::grpc::movie::movie_service_server::MovieService;
 use tonic::{Request, Response, Status};
-use crate::movie::movie_service_server::MovieService;
 
-use crate::movie::{MoviePayload, CreateMovieResponse};
-
+use crate::grpc::movie::{CreateMovieResponse, MoviePayload};
 
 #[derive(Debug)]
 pub struct MovieContext {
-    repo: Box<dyn MovieRepo + Send + Sync + 'static>,
+    repo: Box<dyn MovieRepo>,
 }
 
 #[tonic::async_trait]
@@ -26,13 +25,13 @@ impl MovieService for MovieContext {
             Ok(e) => Ok(Response::new(e)),
             Err(err) => {
                 println!("{}", err);
-                return Err(Status::aborted("wow"))
+                return Err(Status::aborted("wow"));
             }
-        }        
+        }
     }
 }
 
-pub fn new<T: MovieRepo + Send + Sync + 'static>(movie_repo: T) -> MovieServiceServer<MovieContext> {
+pub fn new<T: MovieRepo>(movie_repo: T) -> MovieServiceServer<MovieContext> {
     let data = MovieServiceServer::new(MovieContext {
         repo: Box::new(movie_repo),
     });
