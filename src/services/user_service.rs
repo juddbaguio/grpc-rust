@@ -33,9 +33,7 @@ impl UserService for UserContext {
 }
 
 pub fn new<T: UserRepo>(user_repo: T) -> UserServiceServer<UserContext> {
-    let data = UserServiceServer::new(UserContext {
+    UserServiceServer::new(UserContext {
         repo: Box::new(user_repo),
-    });
-
-    return data;
+    })
 }

@@ -32,9 +32,7 @@ impl MovieService for MovieContext {
 }
 
 pub fn new<T: MovieRepo>(movie_repo: T) -> MovieServiceServer<MovieContext> {
-    let data = MovieServiceServer::new(MovieContext {
+    MovieServiceServer::new(MovieContext {
         repo: Box::new(movie_repo),
-    });
-
-    return data;
+    })
 }

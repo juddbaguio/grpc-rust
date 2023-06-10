@@ -18,8 +18,6 @@ impl UserRepo for UserRepoContainer {
         &self,
         payload: CreateUserPayload,
     ) -> Result<CreateUserResponse, Box<dyn Error>> {
-        let conn = self.db_conn.clone();
-
         let res: (i32,) = sqlx::query_as(
             r#"
          INSERT INTO users (first_name, last_name, age) 
@@ -30,7 +28,7 @@ impl UserRepo for UserRepoContainer {
         .bind(payload.first_name)
         .bind(payload.last_name)
         .bind(payload.age)
-        .fetch_one(&conn)
+        .fetch_one(&self.db_conn)
         .await?;
 
         println!("user id - {} : CREATED", res.0);
