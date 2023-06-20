@@ -9,7 +9,7 @@ use crate::grpc::{
 };
 
 #[async_trait]
-pub trait UserRepo: Debug + Send + Sync + 'static {
+pub trait UserRepo: Debug {
     async fn create_user(
         &self,
         payload: CreateUserPayload,
@@ -17,7 +17,7 @@ pub trait UserRepo: Debug + Send + Sync + 'static {
 }
 
 #[async_trait]
-pub trait MovieRepo: Debug + Send + Sync + 'static {
+pub trait MovieRepo: Debug {
     async fn create_movie(
         &self,
         payload: MoviePayload,
