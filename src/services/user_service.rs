@@ -1,6 +1,6 @@
 use std::{fmt::Debug, sync::Arc};
 
-use crate::repo::traits::UserRepo;
+use crate::repo::ports::{UserRepo, UserRepoPort};
 
 use crate::grpc::user::user_service_server::UserService;
 use tonic::{Request, Response, Status};
@@ -9,9 +9,9 @@ use crate::grpc::user::{
     user_service_server::UserServiceServer, CreateUserPayload, CreateUserResponse,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct UserContext {
-    repo: Arc<dyn UserRepo + Send + Sync>,
+    repo: Arc<UserRepo>,
 }
 
 #[tonic::async_trait]
@@ -33,7 +33,7 @@ impl UserService for UserContext {
     }
 }
 
-pub fn new<T: UserRepo + Send + Sync + 'static>(user_repo: T) -> UserServiceServer<UserContext> {
+pub fn new(user_repo: UserRepo) -> UserServiceServer<UserContext> {
     UserServiceServer::new(UserContext {
         repo: Arc::new(user_repo),
     })

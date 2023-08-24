@@ -5,7 +5,7 @@ use sqlx::{Pool, Postgres};
 
 use crate::grpc::user::{CreateUserPayload, CreateUserResponse};
 
-use super::traits::UserRepo;
+use super::ports::UserRepoPort;
 
 #[derive(Debug)]
 pub struct UserRepoContainer {
@@ -13,7 +13,7 @@ pub struct UserRepoContainer {
 }
 
 #[async_trait]
-impl UserRepo for UserRepoContainer {
+impl UserRepoPort for UserRepoContainer {
     async fn create_user(
         &self,
         payload: CreateUserPayload,

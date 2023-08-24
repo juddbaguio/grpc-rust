@@ -3,7 +3,7 @@ use std::error::Error;
 use async_trait::async_trait;
 use sqlx::{Pool, Postgres};
 
-use super::traits::MovieRepo;
+use super::ports::MovieRepoPort;
 use crate::grpc::movie::{CreateMovieResponse, MoviePayload};
 
 #[derive(Debug)]
@@ -12,7 +12,7 @@ pub struct MovieRepoContainer {
 }
 
 #[async_trait]
-impl MovieRepo for MovieRepoContainer {
+impl MovieRepoPort for MovieRepoContainer {
     async fn create_movie(
         &self,
         payload: MoviePayload,

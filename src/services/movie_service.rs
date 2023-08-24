@@ -1,16 +1,16 @@
 use std::{fmt::Debug, sync::Arc};
 
-use crate::grpc::movie::movie_service_server::MovieServiceServer;
-use crate::repo::traits::MovieRepo;
+use crate::repo::ports::MovieRepo;
+use crate::{grpc::movie::movie_service_server::MovieServiceServer, repo::ports::MovieRepoPort};
 
 use crate::grpc::movie::movie_service_server::MovieService;
 use tonic::{Request, Response, Status};
 
 use crate::grpc::movie::{CreateMovieResponse, MoviePayload};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct MovieContext {
-    repo: Arc<dyn MovieRepo + Send + Sync>,
+    repo: Arc<MovieRepo>,
 }
 
 #[tonic::async_trait]
@@ -32,9 +32,7 @@ impl MovieService for MovieContext {
     }
 }
 
-pub fn new<T: MovieRepo + Send + Sync + 'static>(
-    movie_repo: T,
-) -> MovieServiceServer<MovieContext> {
+pub fn new(movie_repo: MovieRepo) -> MovieServiceServer<MovieContext> {
     MovieServiceServer::new(MovieContext {
         repo: Arc::new(movie_repo),
     })
