@@ -42,8 +42,8 @@ impl MovieRepoPort for MovieRepo {
         &self,
         payload: MoviePayload,
     ) -> Result<CreateMovieResponse, Box<dyn Error>> {
-        match *self {
-            Self::Concrete(ref container) => container.create_movie(payload).await,
+        match self {
+            Self::Concrete(container) => container.create_movie(payload).await,
         }
     }
 }
@@ -54,8 +54,8 @@ impl UserRepoPort for UserRepo {
         &self,
         payload: CreateUserPayload,
     ) -> Result<CreateUserResponse, Box<dyn Error>> {
-        match *self {
-            Self::Concrete(ref container) => container.create_user(payload).await,
+        match self {
+            Self::Concrete(container) => container.create_user(payload).await,
         }
     }
 }

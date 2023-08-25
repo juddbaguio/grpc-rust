@@ -18,6 +18,7 @@ impl UserRepoPort for UserRepoContainer {
         &self,
         payload: CreateUserPayload,
     ) -> Result<CreateUserResponse, Box<dyn Error>> {
+        let tx = self.db_conn.begin().await?;
         let res: (i32,) = sqlx::query_as(
             r#"
          INSERT INTO users (first_name, last_name, age) 
