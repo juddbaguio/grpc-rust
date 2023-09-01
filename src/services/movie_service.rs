@@ -1,6 +1,5 @@
 use std::{fmt::Debug, sync::Arc};
 
-use crate::repo::ports::MovieRepo;
 use crate::{grpc::movie::movie_service_server::MovieServiceServer, repo::ports::MovieRepoPort};
 
 use crate::grpc::movie::movie_service_server::MovieService;
@@ -9,12 +8,12 @@ use tonic::{Request, Response, Status};
 use crate::grpc::movie::{CreateMovieResponse, MoviePayload};
 
 #[derive(Debug, Clone)]
-pub struct MovieContext {
-    repo: Arc<MovieRepo>,
+pub struct MovieContext<T: MovieRepoPort> {
+    repo: Arc<T>,
 }
 
 #[tonic::async_trait]
-impl MovieService for MovieContext {
+impl<T: MovieRepoPort> MovieService for MovieContext<T> {
     async fn create_movie(
         &self,
         request: Request<MoviePayload>,
@@ -32,7 +31,7 @@ impl MovieService for MovieContext {
     }
 }
 
-pub fn new(movie_repo: MovieRepo) -> MovieServiceServer<MovieContext> {
+pub fn new<T: MovieRepoPort>(movie_repo: T) -> MovieServiceServer<MovieContext<T>> {
     MovieServiceServer::new(MovieContext {
         repo: Arc::new(movie_repo),
     })
